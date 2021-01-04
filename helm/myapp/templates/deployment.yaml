@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{.Values.namespace}}
+  name: {{.Values.name}}
+  labels:
+    app: {{.Values.name}}
+spec:
+  replicas: {{.Values.replicaCount}}
+  selector:
+    matchLabels:
+      app: {{.Values.name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.name}}
+    spec:
+      imagePullSecrets:
+        - name: {{.Values.image.pullSecret}}
+      affinity:
+        {{- if .Values.nodeAffinity.enable }}
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: {{.Values.nodeAffinity.key}}
+                    operator: In
+                    values:
+                      - {{.Values.nodeAffinity.val}}
+        {{- end}}
+        {{- if .Values.podAntiAffinity.enable }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - {{.Values.name}}
+              topologyKey: kubernetes.io/hostname
+        {{- end}}
+      {{- if .Values.tolerations.enable}}
+      tolerations:
+        - key: ${{.Values.tolerations.key}}
+          operator: "Equal"
+          value: ${{.Values.tolerations.val}}
+          effect: "NoExecute"
+      {{- end}}
+      containers:
+        - name: {{.Values.name}}
+          image: {{.Values.image.repository}}:{{.Values.image.tag}}
+          imagePullPolicy: {{.Values.image.pullPolicy}}
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: {{.Values.name}}-config
+              mountPath: /work/{{.Values.name}}/config
+          {{- if .Values.container.runAsRoot}}
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+            runAsUser: 0
+          {{- end}}
+      {{- if .Values.container.runAsRoot}}
+      securityContext:
+        runAsUser: 0
+      {{- end}}
+      volumes:
+        - name: {{.Values.name}}-config
+          projected:
+            sources:
+            - configMap:
+                name: {{.Values.name}}
+                items:
+                  - key: base.json
+                    path: base.json
+                  - key: app.json
+                    path: app.json
