@@ -21,8 +21,13 @@ function Render() {
     in=$1
     out=$2
 
-    CheckNotEmpty "in"
-    CheckNotEmpty "out"
+    CheckNotEmpty "in" || return 1
+    CheckNotEmpty "out" || return 1
+
+    [ ! -f "${in}" ] && {
+       Warn "[${in}] no such file or directory"
+       return 2
+    }
 
     eval "cat > \"${out}\" <<EOF
 $(< "${in}")
@@ -38,9 +43,10 @@ function Help() {
 function main() {
     if [ "$1" == "-h" ] || [ -z "$1" ]; then
         Help
+        return 0
     fi
 
-    render "$1" "$2"
+    Render "$1" "$2"
 }
 
 main "$@"
