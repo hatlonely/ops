@@ -8,6 +8,14 @@ image:
   pullPolicy: Always
   pullSecret: hatlonely-pull-secrets
 
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+  labels: {}
+  portName: service
+  annotations: {}
+
 container:
   runAsRoot: false
 
@@ -28,6 +36,17 @@ ingress:
   enable: false
   host: k8s.myapp.hatlonely.com
   secretName: k8s-secret
+
+prometheus:
+  monitor:
+    enabled: false
+    additionalLabels: {}
+    namespace: ""
+    scheme: http
+    bearerTokenFile:
+    tlsConfig: {}
+    relabelings: []
+    scrapeTimeout: 10s
 
 config:
   base: "{}"
