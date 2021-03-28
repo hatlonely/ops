@@ -43,6 +43,7 @@ prometheus:
     additionalLabels: {}
     namespace: ""
     scheme: http
+    path: /metrics
     bearerTokenFile:
     tlsConfig: {}
     relabelings: []
