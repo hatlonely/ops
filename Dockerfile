@@ -1,10 +1,6 @@
 # build ops/cfg
 FROM golang:1.14 AS go-kit-build
 
-ARG git_url
-ARG git_url_instand_of
-
-RUN git config --global url."$git_url".insteadOf "$git_url_instand_of"
 RUN git clone --depth=1 --branch v1.0.11 https://github,com/hatlonely/go-kit.git go-kit && \
     cd go-kit && make build
 

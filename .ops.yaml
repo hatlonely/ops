@@ -1,0 +1,20 @@
+name: ops
+
+env:
+  default:
+    NAME: "ops"
+    REGISTRY_ENDPOINT: "registry.${REGION_ID}.aliyuncs.com"
+    REGISTRY_ENDPOINT_VPC: "registry-vpc.${REGION_ID}.aliyuncs.com"
+    REGISTRY_USERNAME: "{{.registry.hatlonely.username}}"
+    REGISTRY_PASSWORD: "{{.registry.hatlonely.password}}"
+    REGISTRY_NAMESPACE: "{{.registry.hatlonely.namespace}}"
+    IMAGE_TAG: "$(git describe --tags | awk '{print(substr($0,2,length($0)))}'; test ${PIPESTATUS[0]} -eq 0)"
+  hl-dev:
+    REGION_ID: "cn-shanghai"
+
+task:
+  image:
+    step:
+      - make image
+      - docker login --username="${REGISTRY_USERNAME}" --password="${REGISTRY_PASSWORD}" "${REGISTRY_ENDPOINT}"
+      - docker push "${REGISTRY_ENDPOINT}/${REGISTRY_NAMESPACE}/${NAME}:${IMAGE_TAG}"
