@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: {{.Values.namespace}}
-  name: {{.Values.name}}
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Values.name }}
   labels:
-    app: {{.Values.name}}
+    app: {{ .Values.name }}
 spec:
-  replicas: {{.Values.replicaCount}}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{.Values.name}}
+      app: {{ .Values.name }}
   template:
     metadata:
       labels:
-        app: {{.Values.name}}
+        app: {{ .Values.name }}
     spec:
       imagePullSecrets:
-        - name: {{.Values.image.pullSecret}}
+        - name: {{ .Values.image.pullSecret }}
       affinity:
         {{- if .Values.nodeAffinity.enable }}
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
-                  - key: {{.Values.nodeAffinity.key}}
+                  - key: {{ .Values.nodeAffinity.key }}
                     operator: In
                     values:
-                      - {{.Values.nodeAffinity.val}}
+                      - {{ .Values.nodeAffinity.val }}
         {{- end}}
         {{- if .Values.podAntiAffinity.enable }}
         podAntiAffinity:
@@ -36,37 +36,41 @@ spec:
                   - key: app
                     operator: In
                     values:
-                      - {{.Values.name}}
+                      - {{ .Values.name }}
               topologyKey: kubernetes.io/hostname
         {{- end}}
-      {{- if .Values.tolerations.enable}}
+      {{- if .Values.tolerations.enable }}
       tolerations:
-        - key: ${{.Values.tolerations.key}}
+        - key: {{ .Values.tolerations.key }}
           operator: "Equal"
-          value: ${{.Values.tolerations.val}}
+          value: {{ .Values.tolerations.val }}
           effect: "NoExecute"
       {{- end}}
       containers:
-        - name: {{.Values.name}}
-          image: {{.Values.image.repository}}:{{.Values.image.tag}}
-          imagePullPolicy: {{.Values.image.pullPolicy}}
+        - name: {{ .Values.name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 80
+            - containerPort: {{ .Values.container.port }}
           volumeMounts:
-            - name: {{.Values.name}}-config
-              mountPath: /work/{{.Values.name}}/config
-          {{- if .Values.container.runAsRoot}}
+            - name: {{ .Values.name }}
+              {{- if not .Values.container.configMountPath }}
+              mountPath: /work/{{ .Values.name }}/config
+              {{- else }}
+              mountPath: {{ .Values.container.configMountPath }}
+              {{- end }}
+          {{- if .Values.container.runAsRoot }}
           securityContext:
             privileged: true
             allowPrivilegeEscalation: true
             runAsUser: 0
           {{- end}}
-      {{- if .Values.container.runAsRoot}}
+      {{- if .Values.container.runAsRoot }}
       securityContext:
         runAsUser: 0
       {{- end}}
       volumes:
-        - name: {{.Values.name}}-config
+        - name: {{.Values.name}}
           projected:
             sources:
             - configMap:

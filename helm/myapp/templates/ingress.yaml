@@ -2,21 +2,21 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  namespace: {{.Values.namespace}}
-  name: {{.Values.name}}
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Values.name }}
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-    - host: {{.Values.ingress.host}}
+    - host: {{ .Values.ingress.host }}
       http:
         paths:
           - path:  /
             backend:
-              serviceName: {{.Values.name}}
-              servicePort: 80
+              serviceName: {{ .Values.name }}
+              servicePort: {{ .Values.container.port }}
   tls:
     - hosts:
-        - {{.Values.ingress.host}}
-      secretName: {{.Values.ingress.secretName}}
+        - {{ .Values.ingress.host }}
+      secretName: {{ .Values.ingress.secretName }}
 {{- end }}

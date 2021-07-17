@@ -1,23 +1,11 @@
-namespace: prod
 name: myapp
-replicaCount: 1
 
+replicaCount: 1
 image:
-  repository: registry.cn-beijing.aliyuncs.com/hatlonely/myapp
+  repository: nginx
   tag: 1.0.0
   pullPolicy: Always
-  pullSecret: hatlonely-pull-secrets
-
-service:
-  type: ClusterIP
-  port: 80
-  targetPort: 80
-  labels: {}
-  portName: service
-  annotations: {}
-
-container:
-  runAsRoot: false
+  pullSecret: pull-secret
 
 nodeAffinity:
   enable: false
@@ -25,29 +13,21 @@ nodeAffinity:
   val: myapp
 
 podAntiAffinity:
-  enable: false
-
+  enable: true
 tolerations:
   enable: false
   key: dedicated
   val: myapp
 
+container:
+  port: 80
+  runAsRoot: false
+  configMountPath:
+
 ingress:
   enable: false
-  host: k8s.myapp.hatlonely.com
-  secretName: k8s-secret
-
-prometheus:
-  monitor:
-    enabled: false
-    additionalLabels: {}
-    namespace: ""
-    scheme: http
-    path: /metrics
-    bearerTokenFile:
-    tlsConfig: {}
-    relabelings: []
-    scrapeTimeout: 10s
+  host: hatlonely.com
+  secretName: test-secret
 
 config:
   base: "{}"
