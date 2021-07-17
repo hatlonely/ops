@@ -18,16 +18,41 @@ function CheckNotEmpty() {
 }
 
 function Render() {
-    in=$1
-    out=$2
+    local in=$1
+    local out=$2
+
+    if [[ -f "${in}" ]]; then
+        RenderFile "${in}" "${out}"
+    elif [[ -d "${in}" ]]; then
+        find "${in}" -type f | while read -r fin; do
+            fout="${fin//$in/$out}"
+            ext="${fin##*.}"
+            if [[ "${ext}" == "tpl" ]]; then
+                RenderFile "${fin}" "${fout%.*}"
+            else
+                mkdir -p "$(dirname "${fout}")"
+                cp "${fin}" "${fout}"
+            fi
+        done
+    else
+        Warn "unsupported input file or not exist"
+        return 1
+    fi
+}
+
+function RenderFile() {
+    local in=$1
+    local out=$2
 
     CheckNotEmpty "in" || return 1
     CheckNotEmpty "out" || return 1
 
     [ ! -f "${in}" ] && {
-       Warn "[${in}] no such file or directory"
-       return 2
+        Warn "[${in}] no such file or directory"
+        return 2
     }
+
+    mkdir -p "$(dirname "${out}")"
 
     eval "cat > \"${out}\" <<EOF
 $(< "${in}")
