@@ -1,7 +1,7 @@
 # build ops/cfg
 FROM golang:1.14 AS go-kit-build
 
-RUN git clone --depth=1 --branch v1.0.11 https://github,com/hatlonely/go-kit.git go-kit && \
+RUN git clone --depth=1 --branch v1.0.20 https://github.com/hatlonely/go-kit.git go-kit && \
     cd go-kit && make build
 
 # build helm
