@@ -63,4 +63,6 @@ ENV OPS=/work/ops
 ENV PATH=$PATH:/work/bin
 WORKDIR /work
 
+RUN helm plugin install https://github.com/databus23/helm-diff
+
 CMD ["sh"]
