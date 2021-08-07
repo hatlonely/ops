@@ -76,7 +76,7 @@ spec:
             - configMap:
                 name: {{.Values.name}}
                 items:
-                  - key: base.json
-                    path: base.json
-                  - key: app.json
-                    path: app.json
+                  {{ range $key, $val := .Values.config }}
+                  - key: {{ $key }}
+                    path: {{ $key }}
+                  {{ end }}

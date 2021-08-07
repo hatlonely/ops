@@ -30,5 +30,5 @@ ingress:
   secretName: test-secret
 
 config:
-  base: "{}"
-  app: "{}"
+  base.json: "{}"
+  app.json: "{}"

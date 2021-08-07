@@ -4,5 +4,6 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
   name: "{{ .Values.name }}"
 data:
-  base.json: {{ .Values.config.base | quote }}
-  app.json: {{ .Values.config.app | quote }}
+  {{ range $key, $val := .Values.config }}
+  {{ $key }}: {{ $val | quote }}
+  {{ end }}

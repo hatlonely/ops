@@ -3,7 +3,7 @@
 import json
 import argparse
 import aksk
-import alics
+import acsv2
 
 from alibabacloud_cs20151215.client import Client as CS20151215Client
 from alibabacloud_tea_openapi import models as open_api_models
@@ -54,7 +54,7 @@ def add_master_to_slb(config: open_api_models.Config, region_id, cluster_id, clu
         if resource["resource_type"] == "ALIYUN::ECS::InstanceGroup":
             ecs_instance_ids.append(resource["instance_id"])
 
-    create_load_balancer_tcp_listener_res = alics.do(config, region_id, "slb", "CreateLoadBalancerTCPListener", {
+    create_load_balancer_tcp_listener_res = acsv2.do(config, region_id, "slb", "CreateLoadBalancerTCPListener", {
         "ListenerPort": 6443,
         "BackendServerPort": 6443,
         "Bandwidth": -1,
@@ -65,7 +65,7 @@ def add_master_to_slb(config: open_api_models.Config, region_id, cluster_id, clu
         "AclStatus": "on",
         "Description": cluster_name
     })
-    add_backend_servers_res = alics.do(config, region_id,  "slb", "AddBackendServers", {
+    add_backend_servers_res = acsv2.do(config, region_id,  "slb", "AddBackendServers", {
         "LoadBalancerId": slb_id,
         "BackendServers": json.dumps([{
             "ServerId": x,
@@ -75,7 +75,7 @@ def add_master_to_slb(config: open_api_models.Config, region_id, cluster_id, clu
             "Description": "k8s-master-{}".format(resources[0]["cluster_id"]),
         } for x in ecs_instance_ids])
     })
-    set_load_balancer_status_res = alics.do(config, region_id, "slb", "SetLoadBalancerStatus", {
+    set_load_balancer_status_res = acsv2.do(config, region_id, "slb", "SetLoadBalancerStatus", {
         "LoadBalancerId": slb_id,
         "LoadBalancerStatus": "active",
     })
