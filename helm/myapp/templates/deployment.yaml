@@ -50,6 +50,24 @@ spec:
         - name: {{ .Values.name }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          startupProbe:
+            tcpSocket:
+              port: {{ .Values.container.port }}
+            initialDelaySeconds: 3
+            failureThreshold: 10
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: {{ .Values.container.port }}
+            failureThreshold: 10
+            periodSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: {{ .Values.container.port }}
+            failureThreshold: 3
+            periodSeconds: 3
           ports:
             - containerPort: {{ .Values.container.port }}
           volumeMounts:
