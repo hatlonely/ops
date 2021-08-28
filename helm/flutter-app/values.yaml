@@ -1,0 +1,43 @@
+name: myapp
+
+replicaCount: 1
+image:
+  repository: nginx
+  tag: 1.0.0
+  pullPolicy: Always
+  pullSecret: pull-secret
+
+nodeAffinity:
+  enable: false
+  key: test.io/app-name
+  val: myapp
+
+podAntiAffinity:
+  enable: true
+tolerations:
+  enable: false
+  key: dedicated
+  val: myapp
+
+container:
+  runAsRoot: false
+
+ingress:
+  enable: false
+  host: hatlonely.com
+  secretName: test-secret
+
+config:
+  default.conf: |
+    server {
+      listen       80;
+      server_name  localhost;
+      location / {
+          root   /usr/share/nginx/html;
+          index  index.html index.htm;
+      }
+      error_page   500 502 503 504  /50x.html;
+      location = /50x.html {
+          root   /usr/share/nginx/html;
+      }
+    }
