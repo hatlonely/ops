@@ -3,18 +3,17 @@ name: ops
 env:
   default:
     NAME: "ops"
-    REGISTRY_ENDPOINT: "registry.${REGION_ID}.aliyuncs.com"
     IMAGE_TAG: "$(git describe --tags | awk '{print(substr($0,2,length($0)))}'; test ${PIPESTATUS[0]} -eq 0)"
-  hl-aliyun:
-    REGION_ID: "cn-beijing"
+  aliyun:
+    REGISTRY_ENDPOINT: "{{.registry.aliyun.endpoint}}"
     REGISTRY_USERNAME: "{{.registry.aliyun.username}}"
     REGISTRY_PASSWORD: "{{.registry.aliyun.password}}"
     REGISTRY_NAMESPACE: "{{.registry.aliyun.namespace}}"
-  hl-docker:
-    REGISTRY_ENDPOINT: "docker.io"
-    REGISTRY_USERNAME: "{{.registry.aliyun.username}}"
-    REGISTRY_PASSWORD: "{{.registry.aliyun.password}}"
-    REGISTRY_NAMESPACE: "{{.registry.aliyun.namespace}}"
+  docker:
+    REGISTRY_ENDPOINT: "{{.registry.docker.endpoint}}"
+    REGISTRY_USERNAME: "{{.registry.docker.username}}"
+    REGISTRY_PASSWORD: "{{.registry.docker.password}}"
+    REGISTRY_NAMESPACE: "{{.registry.docker.namespace}}"
 
 task:
   image:
