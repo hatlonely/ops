@@ -27,6 +27,7 @@ container:
 ingress:
   enable: false
   host: hatlonely.com
+  ingressClassName: nginx
   secretName: test-secret
 
 config:
