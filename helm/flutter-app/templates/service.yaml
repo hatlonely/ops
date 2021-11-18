@@ -4,7 +4,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
   name: {{ .Values.name }}
 spec:
-  clusterIP: None
   selector:
     app: {{ .Values.name }}
   ports:
