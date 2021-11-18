@@ -18,7 +18,7 @@ spec:
               service:
                 name: {{ .Values.name }}
                 port:
-                  number: {{ .Values.container.port }}
+                  number: 80
   tls:
     - hosts:
         - {{ .Values.ingress.host }}
