@@ -6,8 +6,10 @@ metadata:
   name: {{ .Values.name }}
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    kubernetes.io/ingress.class: {{ .Values.ingress.ingressClassName }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+    kubernetes.io/tls-acme: "true"
 spec:
-  ingressClassName: {{ .Values.ingress.ingressClassName }}
   rules:
     - host: {{ .Values.ingress.host }}
       http:

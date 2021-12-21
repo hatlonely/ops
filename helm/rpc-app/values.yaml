@@ -29,6 +29,7 @@ ingress:
   host: hatlonely.com
   ingressClassName: nginx
   secretName: test-secret
+  clusterIssuer: letsencrypt-http01
 
 config:
   base.json: "{}"
